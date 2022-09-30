@@ -4,26 +4,12 @@ import {
   collection,
   deleteDoc,
   doc,
+  getDoc,
   onSnapshot,
   orderBy,
   query,
   serverTimestamp,
 } from "firebase/firestore";
-
-// export const getTasks = async () => {
-//   let tasks: any[] = [];
-//   const tasksRef = collection(db, "tasks");
-//   const querySnapshot = await getDocs(tasksRef);
-
-//   querySnapshot.forEach((doc) => {
-//     tasks.push({
-//       id: doc.id,
-//       content: doc.data().content,
-//       createdAt: doc.data().createdAt,
-//     });
-//   });
-//   return tasks;
-// };
 
 export const getSnapTasks = async (setFn: any) => {
   const taskData = collection(db, "tasks");
@@ -33,14 +19,22 @@ export const getSnapTasks = async (setFn: any) => {
   });
 };
 
+export const getSnapProgressTask = async (id: string, setFn: any) => {
+  const docRef = doc(db, "tasks", id);
+  const docSnap = await getDoc(docRef);
+  console.log(docSnap.data());
+  await setFn([{ ...docSnap.data(), id: id }]);
+};
+
 export const createTask = async (content: string) => {
   const docRef = await addDoc(collection(db, "tasks"), {
     content: content,
     createdAt: serverTimestamp(),
+    endAt: null,
   });
   return docRef.id;
 };
 
-export const deleteTask = async (id: number) => {
-  await deleteDoc(doc(db, "tasks", id.toString()));
+export const deleteTask = async (id: string) => {
+  await deleteDoc(doc(db, "tasks", id));
 };

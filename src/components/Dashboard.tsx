@@ -14,26 +14,31 @@ import {
 } from "@chakra-ui/react";
 import React, { useEffect, useState } from "react";
 import Header from "./parts/Header";
-import { getSnapTasks, createTask, deleteTask } from "../service/api";
+import {
+  getSnapTasks,
+  getSnapProgressTask,
+  createTask,
+  deleteTask,
+} from "../service/api";
 
 type TypeTasks = {
-  id: number;
+  id: string;
   content: string;
   createdAt: any;
+  endAt: any;
 };
 const Dashboard: React.FC = () => {
   const [tasks, setTasks] = useState<TypeTasks[]>([]);
-
   const [taskName, setTaskName] = useState("");
-  const [progressTaskId, setProgressTaskId] = useState("");
+  const [progressTask, setProgressTask] = useState<TypeTasks[]>([]);
 
   useEffect(() => {
     const getTaskAPI = async () => {
       await getSnapTasks(setTasks);
-
       console.log("get SnapShot");
     };
     getTaskAPI();
+
     console.log("useEffect called!");
   }, []);
 
@@ -44,21 +49,45 @@ const Dashboard: React.FC = () => {
       "🚀 ~ file: Dashboard.tsx ~ line 11 ~ createTaskAPI ~ progressId",
       progressId
     );
-    setProgressTaskId(progressId);
+    await getSnapProgressTask(progressId, setProgressTask);
+
+    console.log(progressTask);
     console.log(tasks);
     console.log("create New Task!");
     setTaskName("");
   };
-  const handleDeleteTask = async (id: number) => {
+  const handleDeleteTask = async (id: string) => {
     await deleteTask(id);
     console.log("Success Delete!");
+  };
+  const handleCheck = () => {
+    console.log(progressTask[0].content);
+    console.log(progressTask);
   };
 
   return (
     <>
       <Header />
       <Box px={4} h="calc(100vh - 60px)" overflowY="scroll">
+        <Button onClick={handleCheck}>PROGRESS</Button>
         <Box w="90%" mx="auto">
+          <Box mt={8}>
+            {
+              <>
+                {/* <Text>タスク名：{progressTask[0].content}</Text> */}
+                {/* <Text>
+                  開始時間：
+                  {progressTask[0].createdAt
+                    ? new Date(
+                        progressTask[0].createdAt?.toDate()
+                      ).toLocaleString()
+                    : null}
+                </Text> */}
+                <Text>終了時間：</Text>
+              </>
+            }
+          </Box>
+
           <Box mt={8}>
             <Box>
               <Text>タスク名</Text>
@@ -95,11 +124,14 @@ const Dashboard: React.FC = () => {
                     return (
                       <Tr key={task.id}>
                         <Td>{task.content}</Td>
-                        {/* <Td>{task.createdAt}</Td> */}
                         <Td>
-                          {new Date(task.createdAt?.toDate()).toLocaleString()}
+                          {task.createdAt
+                            ? new Date(
+                                task.createdAt?.toDate()
+                              ).toLocaleString()
+                            : null}
                         </Td>
-                        <Td>16:53</Td>
+                        <Td></Td>
                         <Td>2:23</Td>
                         <Td>
                           <Button onClick={() => handleDeleteTask(task.id)}>

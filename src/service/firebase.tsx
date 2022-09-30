@@ -3,7 +3,7 @@ import { getFirestore } from "firebase/firestore";
 import { GoogleAuthProvider } from "firebase/auth";
 
 const firebaseConfig = {
-  //   ...
+  // ...
 };
 
 // Initialize Firebase
