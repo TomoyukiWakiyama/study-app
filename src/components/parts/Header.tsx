@@ -1,5 +1,7 @@
 import { Box, Button, Flex, Heading } from "@chakra-ui/react";
 import React from "react";
+import { signInWithGoogle } from "../../service/firebase";
+import { auth } from "../../service/firebase";
 
 const Header: React.FC = () => {
   return (
@@ -11,8 +13,10 @@ const Header: React.FC = () => {
       justifyContent="space-between"
       alignItems="center"
     >
+      <Heading fontSize="md">StudyApp</Heading>
       <Box>
-        <Heading fontSize="md">StudyApp</Heading>
+        <Button onClick={signInWithGoogle}>Login</Button>
+        <Button onClick={() => auth.signOut()}>Logout</Button>
       </Box>
     </Flex>
   );
